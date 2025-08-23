@@ -1,8 +1,12 @@
+
+# PostgreSQL Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
-  namespace: sonarqube       # Namespace for the deployment
+  namespace: sonarqube
+  labels:
+    app: postgres
 spec:
   replicas: 1
   selector:
@@ -15,20 +19,18 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:latest       # Latest PostgreSQL image
-          imagePullPolicy: IfNotPresent
+          image: postgres:latest
           ports:
             - containerPort: 5432
           env:
             - name: POSTGRES_USER
-              value: admin             # Hardcoded username
+              value: admin
             - name: POSTGRES_PASSWORD
-              value: admin@123         # Hardcoded password
+              value: admin@123
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgredb
       volumes:
         - name: postgredb
           persistentVolumeClaim:
-            claimName: postgres-pv-claim
-
+            claimName: postgres-pvc
