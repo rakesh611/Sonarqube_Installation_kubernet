@@ -1,6 +1,3 @@
-Create the Secret using kubectl apply:
--------
-    kubectl apply -f postgres-secrets.yml
 
 Create PV and PVC for Postgres using yaml file:
 -----
