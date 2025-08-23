@@ -1,8 +1,9 @@
+# SonarQube Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sonarqube
-  namespace: sonarqube        # Namespace for the deployment
+  namespace: sonarqube
   labels:
     app: sonarqube
 spec:
@@ -15,39 +16,38 @@ spec:
       labels:
         app: sonarqube
     spec:
+      hostPID: true
       containers:
         - name: sonarqube
-          image: sonarqube:7.1
-          resources:
-            requests:
-              cpu: 500m
-              memory: 1024Mi
-            limits:
-              cpu: 2000m
-              memory: 2048Mi
-          volumeMounts:
-            - mountPath: /opt/sonarqube/data/
-              name: sonar-data
-            - mountPath: /opt/sonarqube/extensions/
-              name: sonar-extensions
-          env:
-            - name: SONARQUBE_JDBC_USERNAME
-              value: admin             # Hardcoded username
-            - name: SONARQUBE_JDBC_PASSWORD
-              value: admin@123         # Hardcoded password
-            - name: SONARQUBE_JDBC_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: sonar-config
-                  key: url
+          image: sonarqube:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 9000
-              protocol: TCP
+          env:
+            - name: SONARQUBE_JDBC_URL
+              value: jdbc:postgresql://postgres.sonarqube.svc.cluster.local:5432/postgres
+            - name: SONARQUBE_JDBC_USERNAME
+              value: admin
+            - name: SONARQUBE_JDBC_PASSWORD
+              value: admin@123
+          resources:
+            limits:
+              cpu: "1"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 2Gi
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /opt/sonarqube/data
+              name: sonar-data
+            - mountPath: /opt/sonarqube/extensions
+              name: sonar-extensions
       volumes:
         - name: sonar-data
           persistentVolumeClaim:
-            claimName: sonar-data
+            claimName: sonar-data-pvc
         - name: sonar-extensions
           persistentVolumeClaim:
-            claimName: sonar-extensions
-
+            claimName: sonar-extensions-pvc
