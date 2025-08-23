@@ -1,12 +1,25 @@
+# SonarQube PVCs
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: sonar-data
-  namespace: sonarqube       # Namespace for scoping
+  name: sonar-data-pvc
+  namespace: sonarqube
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: standard
+  resources:
+    requests:
+      storage: 250Mi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sonar-extensions-pvc
+  namespace: sonarqube
+spec:
+  accessModes:
+    - ReadWriteOnce
   resources:
     requests:
       storage: 250Mi
