@@ -1,17 +1,17 @@
+# SonarQube Service
 apiVersion: v1
 kind: Service
 metadata:
   name: sonarqube
   namespace: sonarqube
-  labels:
-    app: sonarqube
 spec:
-  type: LoadBalancer       # Permanent external access
+  type: NodePort
   selector:
     app: sonarqube
   ports:
-    - name: sonar
-      port: 80             # External port
-      targetPort: 9000     # Pod container port
-      protocol: TCP
+    - port: 9000        # Port SonarQube listens on
+      targetPort: 9000  # Container port
+      nodePort: 30080   # Node port to access externally
+
+                                                                                                                                                                                              214,0-1       Bot
 
