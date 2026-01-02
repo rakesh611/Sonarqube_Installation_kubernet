@@ -1,8 +1,9 @@
-# PostgreSQL PersistentVolume
+---
+# SonarQube Extensions PersistentVolume
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: postgres-pv
+  name: sonar-extensions-pv
 spec:
   storageClassName: standard
   capacity:
@@ -10,7 +11,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/postgres-data"
+    path: /mnt/sonar-extensions
   persistentVolumeReclaimPolicy: Retain
   nodeAffinity:
     required:
@@ -22,11 +23,11 @@ spec:
                 - kubeworker3.lab.example.com
 
 ---
-# PostgreSQL PersistentVolumeClaim
+# SonarQube Extensions PersistentVolumeClaim
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pvc
+  name: sonar-extensions-pvc
   namespace: sonarqube
 spec:
   storageClassName: standard

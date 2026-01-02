@@ -9,9 +9,7 @@ spec:
   selector:
     app: sonarqube
   ports:
-    - port: 9000        # Port SonarQube listens on
+    - port: 9000        # Port SonarQube listens on inside cluster
       targetPort: 9000  # Container port
-      nodePort: 30080   # Node port to access externally
-
-                                                                                                                                                                                              214,0-1       Bot
+      nodePort: 30080   # External access via NodePort
 

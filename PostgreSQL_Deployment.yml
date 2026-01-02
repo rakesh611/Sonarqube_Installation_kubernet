@@ -1,36 +1,44 @@
-
-# PostgreSQL Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
+apiVersion: apps/v1            # Deployment API version
+kind: Deployment               # Kind of resource
+metadata:                      # Deployment metadata
   name: postgres
   namespace: sonarqube
   labels:
     app: postgres
-spec:
-  replicas: 1
-  selector:
+spec:                          # Deployment spec
+  replicas: 1                  # Number of pod replicas
+  selector:                    # Label selector for pods
     matchLabels:
       app: postgres
-  template:
-    metadata:
+  template:                    # Pod template
+    metadata:                  # Pod metadata
       labels:
         app: postgres
-    spec:
-      containers:
+    spec:                      # Pod spec → THIS is where nodeSelector & tolerations go
+      nodeSelector:            # Ensures pod runs on a specific node
+        kubernetes.io/hostname: kubeworker3.lab.example.com
+      tolerations:             # Allows pod to schedule on tainted nodes
+        - key: "postgres"
+          operator: "Equal"
+          value: "enabled"
+          effect: "NoSchedule"
+      containers:              # List of containers in the pod
         - name: postgres
-          image: postgres:latest
+          image: postgres:15   # Stable PostgreSQL version
           ports:
             - containerPort: 5432
-          env:
+          env:                 # Environment variables for Postgres
             - name: POSTGRES_USER
               value: admin
             - name: POSTGRES_PASSWORD
               value: admin@123
-          volumeMounts:
+            - name: POSTGRES_DB
+              value: sonarqube
+          volumeMounts:        # Mount PVC into container
             - mountPath: /var/lib/postgresql/data
               name: postgredb
-      volumes:
+      volumes:                 # Pod volumes
         - name: postgredb
           persistentVolumeClaim:
             claimName: postgres-pvc
+
